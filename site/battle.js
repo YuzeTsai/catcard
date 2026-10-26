@@ -73,6 +73,19 @@ function cpuTeam(mine){// opponent cards match your rarity, sometimes one tier o
   });
 }
 
+// Team code: MEOW-<id>-<id>-<id>-<check>. Friends fight your team, played by the computer (no reward).
+const checksum=ids=>(ids[0]*31+ids[1]*17+ids[2]*7)%97;
+const teamCode=ids=>`MEOW-${ids.join('-')}-${checksum(ids)}`;
+function parseCode(text){
+  const m=String(text).toUpperCase().match(/MEOW-(\d+)-(\d+)-(\d+)-(\d+)/);
+  if(!m)return null;
+  const ids=m.slice(1,4).map(Number);
+  if(checksum(ids)!==Number(m[4])||new Set(ids).size<3||!ids.every(id=>cards.some(c=>c.id===id)))return null;
+  return ids;
+}
+const inviteLink=ids=>`${location.origin}${location.pathname}?team=${teamCode(ids)}`;
+async function copyText(text,done){try{await navigator.clipboard.writeText(text);toast(done);}catch{prompt('複製這段文字：',text);}}
+
 // ---- UI ----
 let B=null;
 const ownedCards=()=>cards.filter(c=>state.owned[c.id]).sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)||a.id-b.id);
@@ -85,6 +98,7 @@ function renderBattleView(){
   $('#bt-pool').innerHTML=mine.map(c=>tile(c,state.team.includes(c.id))).join('');
   const need=Math.max(0,3-mine.length);
   $('#bt-start').disabled=state.team.length<3;
+  ['#bt-copy-code','#bt-copy-link','#bt-friend-go'].forEach(s=>$(s).disabled=state.team.length<3);
   $('#bt-note').textContent=need?`還需要再收集 ${need} 張卡，才能組成隊伍。`:state.team.length<3?`再選 ${3-state.team.length} 張卡出戰。`:'隊伍準備好了！';
 }
 function pickCard(id){
@@ -94,7 +108,7 @@ function pickCard(id){
 }
 function side(team,idx,mine){
   const f=team[idx];
-  return `<div class="bt-fighter" data-type="${f.type}"><img src="${f.card.image}" alt="${f.card.name}"><div class="bt-info"><div class="bt-name">${f.card.name}</div><div class="bt-meta">${TYPE_ICON[f.type]}${f.type}・${f.card.rarity}・萌力 ${f.atk}・護盾 ${f.def}</div><div class="bt-hp"><i style="width:${f.hp/f.max*100}%"></i></div><div class="bt-num">${mine?'我方':'對手'}心情 ${f.hp}/${f.max}${f.guard?' 🛡':''}${f.weak>0?' ↓':''}${f.charge?' ✦':''}</div><div class="bench">${team.map((t,i)=>`<span class="dot ${t.hp?'':'ko'} ${i===idx?'cur':''}"></span>`).join('')}</div></div></div>`;
+  return `<div class="bt-fighter" data-type="${f.type}"><img src="${f.card.image}" alt="${f.card.name}"><div class="bt-info"><div class="bt-name">${f.card.name}</div><div class="bt-meta">${TYPE_ICON[f.type]}${f.type}・${f.card.rarity}・萌力 ${f.atk}・護盾 ${f.def}</div><div class="bt-hp"><i style="width:${f.hp/f.max*100}%"></i></div><div class="bt-num">${mine?'我方':B.friend?'朋友':'對手'}心情 ${f.hp}/${f.max}${f.guard?' 🛡':''}${f.weak>0?' ↓':''}${f.charge?' ✦':''}</div><div class="bench">${team.map((t,i)=>`<span class="dot ${t.hp?'':'ko'} ${i===idx?'cur':''}"></span>`).join('')}</div></div></div>`;
 }
 function renderBattle(){
   $('#bt-cpu').innerHTML=side(B.cpu,B.ci,false);
@@ -152,7 +166,8 @@ async function cpuTurn(){
 function finish(win){
   B.over=true;B.busy=false;renderBattle();
   let msg;
-  if(win===true){
+  if(B.friend)msg=win===true?'你贏了朋友的隊伍！🎉 友誼賽不計獎勵與勝場。':win===false?'朋友的隊伍比較強…再試一次，或換個隊伍！':'打了太久，大家都累了，這場平手。';
+  else if(win===true){
     state.wins++;
     const r=grantGameReward(B.date);
     msg=r==='ok'?'你贏了！🎉 抽卡券 +1，已經放進口袋。':r==='quota'?'你贏了！🎉 今天的 3 次獎勵已經領完，這場是練習賽。':'你贏了！🎉 新的一天開始了，重新挑戰即可領取今天的獎勵。';
@@ -160,22 +175,27 @@ function finish(win){
   }else msg=win===false?'這次輸了…不過每張貓咪都是冠軍，再試一次！':'打了太久，大家都累了，這場平手。';
   say([msg]);$('#bt-again').hidden=false;
 }
-function startBattle(){
+function startBattle(friend){// friend = card ids of a friend's team (played by the computer), none = random opponent
   if(state.team.length<3)return;
   ensureDaily();
   const me=state.team.map(id=>fighter(cards.find(c=>c.id===id)));
-  B={me,cpu:cpuTeam(me),mi:0,ci:0,turns:0,over:false,busy:false,date:taipeiDate(),run:(B?.run||0)+1};
+  B={me,cpu:friend?friend.map(id=>fighter(cards.find(c=>c.id===id))):cpuTeam(me),friend:friend||null,mi:0,ci:0,turns:0,over:false,busy:false,date:taipeiDate(),run:(B?.run||0)+1};
   $('#bt-again').hidden=true;
   tick(B.me[0]);renderBattle();
-  say([state.daily.games>=3?'今天的獎勵已領完，這場是練習賽。':'對戰開始！選一個技能。']);
+  say([friend?'友誼賽開始！（不計獎勵）選一個技能。':state.daily.games>=3?'今天的獎勵已領完，這場是練習賽。':'對戰開始！選一個技能。']);
   if(!$('#battle-dialog').open)$('#battle-dialog').showModal();
 }
 
 $('#bt-pool').addEventListener('click',e=>{const b=e.target.closest('[data-pick]');if(b)pickCard(b.dataset.pick);});
 $('#bt-team').addEventListener('click',e=>{const b=e.target.closest('[data-pick]');if(b)pickCard(b.dataset.pick);});
-$('#bt-start').addEventListener('click',startBattle);
-$('#bt-again').addEventListener('click',startBattle);
+$('#bt-start').addEventListener('click',()=>startBattle());
+$('#bt-again').addEventListener('click',()=>startBattle(B&&B.friend));
 $('#bt-skills').addEventListener('click',e=>{const b=e.target.closest('[data-skill]');if(b)myAct(Number(b.dataset.skill));});
 $('#close-battle').addEventListener('click',()=>$('#battle-dialog').close());
 $('#battle-dialog').addEventListener('close',()=>{if(B)B.run++;});
+$('#bt-copy-code').addEventListener('click',()=>copyText(teamCode(state.team),'隊伍代碼已複製，傳給朋友吧 ✦'));
+$('#bt-copy-link').addEventListener('click',()=>copyText(inviteLink(state.team),'邀請連結已複製，傳給朋友吧 ✦'));
+$('#bt-friend-go').addEventListener('click',()=>{const ids=parseCode($('#bt-code').value);if(!ids){toast('代碼無法辨識，請確認有貼完整（例如 MEOW-13-50-2-6）');return;}startBattle(ids);});
+const invite=new URLSearchParams(location.search).get('team');// opened from a friend's invite link
+if(invite){$('#bt-code').value=invite;showTab('battle');toast('收到朋友的挑戰！選好你的隊伍，再按「挑戰朋友」');}
 if(cards.length)renderBattleView();

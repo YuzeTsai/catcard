@@ -66,3 +66,13 @@
 .bt-pop.dmg{color:#ff8a7a}.bt-pop.heal{color:var(--lime)}
 @keyframes btpop{from{transform:translateY(8px);opacity:1}to{transform:translateY(-22px);opacity:0}}
 @media(max-width:700px){.bt-rules,.bt-bar{margin-inline:20px}.bt-bar{flex-direction:column;align-items:stretch}.bt-team{grid-template-columns:repeat(3,1fr)}.bt-go{align-items:stretch;text-align:left}.bt-pool{padding-inline:20px;grid-template-columns:repeat(3,1fr)}}
+
+/* Friend battle */
+.bt-friend{margin:0 30px 20px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.bt-friend p{margin:0 0 12px;font-size:11px;line-height:1.8;color:var(--muted)}
+.bt-friend-row{display:flex;gap:10px;margin-top:10px}
+.bt-friend-row .secondary{font-size:11px;padding:10px 16px}
+.bt-friend-row .secondary:disabled,.bt-friend-row .primary:disabled{opacity:.4}
+.bt-friend-row input{flex:1;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:7px;background:#0d0f0b;color:var(--ink);font-size:12px}
+.bt-friend-row .primary{font-size:12px;padding:11px 18px;white-space:nowrap}
+@media(max-width:700px){.bt-friend{margin-inline:20px}.bt-friend-row{flex-wrap:wrap}.bt-friend-row .secondary{flex:1}}
