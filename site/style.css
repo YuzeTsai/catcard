@@ -23,3 +23,46 @@
 .save-tools{display:flex;gap:14px}
 .save-tools .text-button{padding:0;font-size:10px}
 @media(max-width:700px){.badges,.exchange-row{padding-inline:20px}.exchange-row{flex-wrap:wrap}.chase-arena{height:240px}}
+
+/* Battle */
+.detail-battle{white-space:pre-line;font-size:11px!important;line-height:1.7}
+.bt-rules{margin:0 30px 20px;font-size:12px;line-height:1.8;color:var(--muted)}
+.bt-bar{display:flex;gap:18px;align-items:center;justify-content:space-between;margin:0 30px 20px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.bt-team{display:grid;grid-template-columns:repeat(3,110px);gap:10px}
+.bt-slot{display:grid;place-items:center;height:116px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:11px}
+.bt-go{display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-size:11px;color:var(--muted);text-align:right}
+.bt-pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:0 30px 60px}
+.bt-tile{position:relative;display:flex;flex-direction:column;gap:4px;text-align:left;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:10px}
+.bt-tile img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:5px}
+.bt-tile-name{font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-tile-meta{color:var(--muted)}
+.bt-tile.sel{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime)}
+.bt-tile[data-type=萌]{--tc:#f3a6c8}.bt-tile[data-type=懶]{--tc:#8fb8e8}.bt-tile[data-type=皮]{--tc:#f5b86a}
+.bt-tile-meta{color:var(--tc)}
+.battle-dialog{width:min(520px,96vw);padding:38px 22px 22px}
+.battle-dialog>.eyebrow{font-size:8px;letter-spacing:1.4px}
+.battle-dialog h2{font-size:22px;margin:0 0 14px}
+.bt-vs{text-align:center;font-size:11px;letter-spacing:3px;color:var(--gold);margin:6px 0}
+.bt-fighter{position:relative;display:flex;gap:12px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.bt-fighter[data-type=萌]{--tc:#f3a6c8}.bt-fighter[data-type=懶]{--tc:#8fb8e8}.bt-fighter[data-type=皮]{--tc:#f5b86a}
+.bt-fighter{border-color:var(--tc)}
+.bt-fighter img{width:84px;height:84px;object-fit:cover;border-radius:7px;flex:none}
+.bt-info{flex:1;min-width:0}
+.bt-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-meta{font-size:10px;color:var(--tc);margin:3px 0 7px}
+.bt-hp{height:8px;border-radius:5px;background:#0d0f0b;overflow:hidden}
+.bt-hp i{display:block;height:100%;background:var(--lime);transition:width .4s}
+.bt-num{font-size:10px;color:var(--muted);margin-top:5px}
+.bench{display:flex;gap:5px;margin-top:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);opacity:.45}.dot.cur{opacity:1}.dot.ko{background:#555;opacity:.4}
+.bt-log{min-height:44px;margin:12px 0;font-size:12px;line-height:1.7;color:var(--ink)}
+.bt-skills{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bt-skill{display:flex;flex-direction:column;gap:3px;text-align:left;padding:10px;border:1px solid #4e6039;border-radius:8px;background:#232d1a;color:var(--lime);font-size:12px}
+.bt-skill small{font-size:9px;color:var(--muted)}
+.bt-skill.ex{border-color:#7a6a3c;color:var(--gold)}
+.bt-skill:disabled{opacity:.4}
+.battle-dialog>.primary{margin-top:14px;width:100%;justify-content:center}
+.bt-pop{position:absolute;right:12px;top:6px;font-size:20px;font-weight:700;animation:btpop .9s ease-out forwards;pointer-events:none}
+.bt-pop.dmg{color:#ff8a7a}.bt-pop.heal{color:var(--lime)}
+@keyframes btpop{from{transform:translateY(8px);opacity:1}to{transform:translateY(-22px);opacity:0}}
+@media(max-width:700px){.bt-rules,.bt-bar{margin-inline:20px}.bt-bar{flex-direction:column;align-items:stretch}.bt-team{grid-template-columns:repeat(3,1fr)}.bt-go{align-items:stretch;text-align:left}.bt-pool{padding-inline:20px;grid-template-columns:repeat(3,1fr)}}
