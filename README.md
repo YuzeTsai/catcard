@@ -40,7 +40,7 @@ git commit -m "Update cat cards"
 git push origin main
 ```
 
-新增卡片時，把圖片放進 `site/assets/`，在 `site/cards.json` 加入卡片資料。保留原有卡片的 `id`，才能維持玩家收藏對應。日常卡片總數會自動計算。卡片可加選填的 `story` 欄位（一句小故事），會顯示在卡片詳情。
+新增卡片時，把圖片放進 `site/assets/`，在 `site/cards.json` 加入卡片資料。保留原有卡片的 `id`，才能維持玩家收藏對應。日常卡片總數會自動計算。卡片可加選填的 `story` 欄位（一句小故事），會顯示在卡片詳情。選填的 `series` 欄位決定卡面的 VOL 編號（沒填就是 VOL.01）。
 
 ## 專案結構
 
