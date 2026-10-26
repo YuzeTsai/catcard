@@ -1,5 +1,7 @@
 # 喵宇宙 MEOWVERSE 🐾
 
+**繁體中文** · [English](README.en.md)
+
 用自家貓咪照片製作的免費抽卡小遊戲，手機與電腦都能玩。
 
 **[立即試玩 →](https://yuzetsai.github.io/catcard/)**
@@ -82,7 +84,7 @@ python3 -m http.server 8000 --directory site
 node --check site/app.js
 node --check site/battle.js
 node scripts/validate.mjs
-git add site README.md scripts .github
+git add site README.md README.en.md scripts .github
 git commit -m "Update cat cards"
 git push origin main
 ```
