@@ -12,7 +12,7 @@ Turn everyday cat photos into a collectible card set: look after your cat, finis
 
 - **118 cards** in four series (VOL.01 to VOL.04), with four rarities (N / R / SR / SSR) and secret cards (SEC).
 - **Pure web game**: no backend, no accounts, no AI API calls, no paid draws.
-- **Progress is stored in your own browser** and can be moved between devices with a save code.
+- **Progress is stored in your own browser**. Move it between devices with a save code, or optionally sign in with Google to sync it to the cloud.
 
 ## How to play
 
@@ -40,9 +40,14 @@ Turn everyday cat photos into a collectible card set: look after your cat, finis
 - Skills can deal damage, heal, guard, weaken the opponent, charge up, drain mood, or ignore types and shields. Strong skills need a few turns of rest.
 - **Friend battle:** copy your team code (like `MEOW-13-50-2-6`) or an invite link and send it to a friend. They paste the code or open the link to challenge your team, played by the computer. Friendly matches give no reward and no win count.
 
-Everything runs in the browser. Clearing browser data clears progress, and each browser, device and domain keeps its own save. To switch devices, press **Copy save code** in the page footer and paste it with **Restore save** on the new device.
+Everything runs in the browser. Clearing browser data clears progress, and each browser, device and domain keeps its own save. To switch devices, either press **Copy save code** in the page footer and paste it with **Restore save** on the new device, or press **Sign in with Google** on both and your progress is merged automatically. Signing in is optional; the whole game works without it.
 
 ## Changelog
+
+### v4.1 · Google sign-in and cloud sync (2026-10-27)
+- Added optional **Google sign-in sync**: progress is saved to the cloud and follows you to other devices.
+- On first sign-in, this browser's progress is merged with the cloud: every card and number takes the larger side, so merging never inflates progress.
+- Only game progress is stored. Without signing in everything works as before, and save codes still work.
 
 ### v4.0 · Story adventure and companion kittens (2026-10-27)
 - Added the **story adventure** "A Meow in the Rainy Night": 8 scenes, 3 choices each, 5 endings. Adopt a kitten and name it yourself.
@@ -117,6 +122,29 @@ Put the image in `site/assets/` and add an entry to `site/cards.json`. Keep the 
 
 `node scripts/validate.mjs` checks the required fields and that every image exists. A failing check stops the deployment.
 
+### Cloud sync setup (Firebase)
+
+Cloud sync uses Firebase Authentication (Google sign-in) and Firestore. The web config in `site/cloud.js` is public by design; data is protected by Firestore rules so each user can only read and write their own save. The Firestore **Rules** tab should be:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /saves/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 20000
+        && request.resource.data.updatedAt is number;
+      allow delete: if false;
+    }
+  }
+}
+```
+
+Also add the site's domain under Authentication → Settings → Authorized domains. It is recommended to restrict the API key to the site's domain (HTTP referrers) in the Google Cloud console.
+
 ## Project layout
 
 - `site/index.html`: the game page
@@ -124,6 +152,7 @@ Put the image in `site/assets/` and add an entry to `site/cards.json`. Keep the 
 - `site/app.js`: packs, tasks, mini-games, badges and saving
 - `site/story.js`: story adventure (script, the 5 companion kittens and their bonuses)
 - `site/battle.js`: Meow Battle (skills, stats and battle flow)
+- `site/cloud.js`: Google sign-in and cloud sync (Firebase)
 - `site/cards.json`: card data
 - `site/assets/`: cat photos
 - `scripts/validate.mjs`: card and asset checks

@@ -12,7 +12,7 @@
 
 - **118 張卡片**，分成 VOL.01 到 VOL.04 四個系列，有 N / R / SR / SSR 四種稀有度，另有未知的祕密閃卡。
 - **純網頁遊戲**：沒有後端、沒有帳號、沒有 AI API 呼叫，也沒有付費抽卡。
-- **進度存在自己的瀏覽器**，可以用存檔碼在不同裝置之間搬家。
+- **進度存在自己的瀏覽器**，可以用存檔碼在不同裝置之間搬家；也可以選擇用 Google 登入，把進度同步到雲端。
 
 ## 玩法
 
@@ -40,9 +40,14 @@
 - 技能效果有傷害、回復、防禦、削弱對手、蓄力、吸取、無視相剋等；強力技能使用後要休息幾回合。
 - **朋友對戰**：選好隊伍後，按「複製我的隊伍代碼」（長得像 `MEOW-13-50-2-6`）或「複製邀請連結」傳給朋友；朋友貼上代碼或點連結，就能挑戰你的隊伍（由電腦操控）。友誼賽不計獎勵與勝場。
 
-遊戲完全在瀏覽器運行。清除瀏覽器資料會清除該瀏覽器的進度；不同網域、瀏覽器、裝置各自存檔。換裝置前，請在頁尾按「複製存檔碼」，到新裝置按「還原存檔」貼上。
+遊戲完全在瀏覽器運行。清除瀏覽器資料會清除該瀏覽器的進度；不同網域、瀏覽器、裝置各自存檔。換裝置有兩種方式：在頁尾按「複製存檔碼」，到新裝置按「還原存檔」貼上；或在頁尾按「用 Google 登入同步」，兩邊登入同一個帳號就會自動合併進度。登入是選用的，不登入也能完整遊玩。
 
 ## 版本更新紀錄
+
+### v4.1 · Google 登入與雲端同步（2026-10-27）
+- 新增 **Google 登入同步**（選用）：登入後進度自動存到雲端，換裝置登入就能繼承。
+- 第一次登入時會把這個瀏覽器的進度與雲端合併：每張卡與每個數字取較大的一邊，不會因為合併而憑空變多。
+- 只儲存遊戲進度；不登入時一切照舊，存檔碼仍可使用。
 
 ### v4.0 · 故事冒險與夥伴小貓（2026-10-27）
 - 新增**故事冒險**「雨夜裡的一聲喵」：8 幕、每幕 3 個選擇、5 個結局，領養一隻專屬小貓並自己取名。
@@ -117,6 +122,29 @@ git push origin main
 
 `node scripts/validate.mjs` 會檢查以上必填欄位與圖片是否存在，沒通過就不會發布。
 
+### 雲端同步設定（Firebase）
+
+雲端同步使用 Firebase Authentication（Google 登入）與 Firestore。網站設定檔在 `site/cloud.js`，那組設定是公開資訊，資料安全靠 Firestore 規則：每個人只能讀寫自己的那一份存檔。Firestore「規則」分頁應設為：
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /saves/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 20000
+        && request.resource.data.updatedAt is number;
+      allow delete: if false;
+    }
+  }
+}
+```
+
+另外請到 Authentication 的「設定 → 授權網域」加入網站網域。建議在 Google Cloud 主控台把該 API 金鑰的 HTTP 參照網址限制為網站網域。
+
 ## 專案結構
 
 - `site/index.html`：遊戲頁面
@@ -124,6 +152,7 @@ git push origin main
 - `site/app.js`：抽卡、任務、小遊戲、成就與存檔
 - `site/story.js`：故事冒險（劇本、5 隻夥伴小貓與加成）
 - `site/battle.js`：喵喵對戰（技能、數值與對戰流程）
+- `site/cloud.js`：Google 登入與雲端同步（Firebase）
 - `site/cards.json`：卡池資料
 - `site/assets/`：貓咪照片
 - `scripts/validate.mjs`：卡池與資源檢查
