@@ -48,6 +48,7 @@
 - 新增 **Google 登入同步**（選用）：登入後進度自動存到雲端，換裝置登入就能繼承。
 - 第一次登入時會把這個瀏覽器的進度與雲端合併：每張卡與每個數字取較大的一邊，不會因為合併而憑空變多。
 - 只儲存遊戲進度；不登入時一切照舊，存檔碼仍可使用。
+- 新增**更新彈窗**：每個版本只會對老玩家彈出一次，內容有更新重點與「開發者的話」；新玩家不會被打擾，頁尾的「更新說明」可以隨時再打開。
 
 ### v4.0 · 故事冒險與夥伴小貓（2026-10-27）
 - 新增**故事冒險**「雨夜裡的一聲喵」：8 幕、每幕 3 個選擇、5 個結局，領養一隻專屬小貓並自己取名。
@@ -122,6 +123,10 @@ git push origin main
 
 `node scripts/validate.mjs` 會檢查以上必填欄位與圖片是否存在，沒通過就不會發布。
 
+### 發布新版本時
+
+改 `site/version.js` 最上面的 `UPDATE`（`version`、`date`、`title`、`items`、`note`），老玩家下次打開就會看到一次更新彈窗。`note` 是「開發者的話」，可以換成你想說的話。
+
 ### 雲端同步設定（Firebase）
 
 雲端同步使用 Firebase Authentication（Google 登入）與 Firestore。網站設定檔在 `site/cloud.js`，那組設定是公開資訊，資料安全靠 Firestore 規則：每個人只能讀寫自己的那一份存檔。Firestore「規則」分頁應設為：
@@ -153,6 +158,7 @@ service cloud.firestore {
 - `site/story.js`：故事冒險（劇本、5 隻夥伴小貓與加成）
 - `site/battle.js`：喵喵對戰（技能、數值與對戰流程）
 - `site/cloud.js`：Google 登入與雲端同步（Firebase）
+- `site/version.js`：更新彈窗（版本號、更新重點與開發者的話）
 - `site/cards.json`：卡池資料
 - `site/assets/`：貓咪照片
 - `scripts/validate.mjs`：卡池與資源檢查

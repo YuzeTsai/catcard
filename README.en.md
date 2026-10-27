@@ -48,6 +48,7 @@ Everything runs in the browser. Clearing browser data clears progress, and each 
 - Added optional **Google sign-in sync**: progress is saved to the cloud and follows you to other devices.
 - On first sign-in, this browser's progress is merged with the cloud: every card and number takes the larger side, so merging never inflates progress.
 - Only game progress is stored. Without signing in everything works as before, and save codes still work.
+- Added an **update pop-up**: shown once per version to returning players with the highlights and a "note from the developer". New players are not interrupted, and the footer's "Update notes" button reopens it.
 
 ### v4.0 · Story adventure and companion kittens (2026-10-27)
 - Added the **story adventure** "A Meow in the Rainy Night": 8 scenes, 3 choices each, 5 endings. Adopt a kitten and name it yourself.
@@ -122,6 +123,10 @@ Put the image in `site/assets/` and add an entry to `site/cards.json`. Keep the 
 
 `node scripts/validate.mjs` checks the required fields and that every image exists. A failing check stops the deployment.
 
+### Releasing a new version
+
+Edit `UPDATE` at the top of `site/version.js` (`version`, `date`, `title`, `items`, `note`). Returning players see the pop-up once the next time they open the game. `note` is the developer's note; replace it with your own words.
+
 ### Cloud sync setup (Firebase)
 
 Cloud sync uses Firebase Authentication (Google sign-in) and Firestore. The web config in `site/cloud.js` is public by design; data is protected by Firestore rules so each user can only read and write their own save. The Firestore **Rules** tab should be:
@@ -153,6 +158,7 @@ Also add the site's domain under Authentication → Settings → Authorized doma
 - `site/story.js`: story adventure (script, the 5 companion kittens and their bonuses)
 - `site/battle.js`: Meow Battle (skills, stats and battle flow)
 - `site/cloud.js`: Google sign-in and cloud sync (Firebase)
+- `site/version.js`: update pop-up (version number, highlights and the developer's note)
 - `site/cards.json`: card data
 - `site/assets/`: cat photos
 - `scripts/validate.mjs`: card and asset checks

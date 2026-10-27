@@ -126,3 +126,14 @@ footer{flex-wrap:wrap;row-gap:10px}
 footer .save-note{width:100%;text-align:right}
 footer .save-note:empty{display:none}
 @media(max-width:700px){footer .save-note{text-align:left}}
+
+/* Update pop-up */
+.update-dialog{width:min(460px,94vw);max-height:90vh;overflow:auto}
+.update-dialog h2{font-size:24px;margin:6px 0 16px;line-height:1.4}
+.update-list{margin:0 0 20px;padding-left:18px;font-size:13px;line-height:1.9}
+.update-list li{margin-bottom:6px}
+.dev-note{margin:0 0 16px;padding:16px;border:1px solid #607040;border-radius:10px;background:#1b2216}
+.dev-note .eyebrow{margin:0 0 8px}
+.dev-note p:last-child{margin:0;font-size:13px!important;line-height:1.9;color:var(--ink)!important;white-space:pre-line}
+.update-link{display:inline-block;margin-bottom:16px;font-size:11px;color:var(--lime)}
+.update-dialog>.primary{width:100%;justify-content:center}
