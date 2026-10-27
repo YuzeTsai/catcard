@@ -8,9 +8,9 @@ A free card-collecting game made from photos of our own cats. It runs in any bro
 
 ## About
 
-Turn everyday cat photos into a collectible card set: look after your cat, finish daily tasks to earn pack tickets, open packs to collect every cute moment, then form a team of three and fight in Meow Battle.
+Turn everyday cat photos into a collectible card set: look after your cat, finish daily tasks to earn pack tickets, open packs to collect every cute moment, then form a team of three and fight in Meow Battle. Finish a short story adventure to adopt a kitten of your own, which lives on the home page, shares your daily tasks and boosts your team in battle.
 
-- **94 cards** in three series (VOL.01, VOL.02, VOL.03), with four rarities (N / R / SR / SSR) and secret cards (SEC).
+- **118 cards** in four series (VOL.01 to VOL.04), with four rarities (N / R / SR / SSR) and secret cards (SEC).
 - **Pure web game**: no backend, no accounts, no AI API calls, no paid draws.
 - **Progress is stored in your own browser** and can be moved between devices with a save code.
 
@@ -27,6 +27,11 @@ Turn everyday cat photos into a collectible card set: look after your cat, finis
 - Your album only shows cards you have found. Duplicates add to a counter, and every 5 spare copies can be traded for 1 ticket (one copy of each card is always kept).
 - Achievement badges sit above the album. Each card has a one-line story, a type and skills, and cards you own can be shared.
 
+**Story adventure and companions**
+- The *Adventure* tab has an 8-scene story, "A Meow in the Rainy Night", with 3 choices per scene. Your leaning (brave, calm, curious, gentle, playful) decides which of 5 kittens you meet, so there are 5 endings.
+- You name the kitten when you adopt it. It lives on the home page and your daily tasks use its name.
+- Each kitten gives a different battle bonus. One companion goes into battle at a time, and you can replay the story to meet the others.
+
 **Meow Battle**
 - Pick 3 cards in the Battle arena and take turns against the computer. Its team matches the rarity of yours.
 - **Type triangle:** ⚡ Naughty beats 💤 Lazy, 💤 Lazy beats 💗 Cute, 💗 Cute beats ⚡ Naughty. An advantage deals ×1.5 damage and a disadvantage ×0.7, so low-rarity cards can still win.
@@ -38,6 +43,14 @@ Turn everyday cat photos into a collectible card set: look after your cat, finis
 Everything runs in the browser. Clearing browser data clears progress, and each browser, device and domain keeps its own save. To switch devices, press **Copy save code** in the page footer and paste it with **Restore save** on the new device.
 
 ## Changelog
+
+### v4.0 · Story adventure and companion kittens (2026-10-27)
+- Added the **story adventure** "A Meow in the Rainy Night": 8 scenes, 3 choices each, 5 endings. Adopt a kitten and name it yourself.
+- Added 5 companion kittens, each with a different battle bonus: +1 cuteness, +1 shield, +3 mood, +2 healing, or ×1.65 type-advantage damage.
+- Your companion appears on the home page, and daily tasks and the mood line use its name.
+- Added 24 VOL.04 cards (#95–#118), 118 cards in total.
+- Added the "Meant to Be" and "One Big Family" badges.
+- Saves now include companions (older saves keep working), and save codes support Chinese names.
 
 ### v3.1 · Team codes (2026-10-26)
 - Added team codes and invite links so friends can battle your team.
@@ -83,6 +96,7 @@ For the first deployment, set **Settings → Pages → Build and deployment → 
 ```sh
 node --check site/app.js
 node --check site/battle.js
+node --check site/story.js
 node scripts/validate.mjs
 git add site README.md README.en.md scripts .github
 git commit -m "Update cat cards"
@@ -108,6 +122,7 @@ Put the image in `site/assets/` and add an entry to `site/cards.json`. Keep the 
 - `site/index.html`: the game page
 - `site/style.css`: styling and holographic card effects
 - `site/app.js`: packs, tasks, mini-games, badges and saving
+- `site/story.js`: story adventure (script, the 5 companion kittens and their bonuses)
 - `site/battle.js`: Meow Battle (skills, stats and battle flow)
 - `site/cards.json`: card data
 - `site/assets/`: cat photos

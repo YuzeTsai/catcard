@@ -21,9 +21,9 @@ function pickSkills(card){// deterministic per card, so a card always has the sa
   const picked=pool.map((s,i)=>[Math.imul(card.id*9301+i*49297+233280,2654435761)>>>0,s]).sort((a,b)=>a[0]-b[0]).slice(0,SKILL_COUNT[card.rarity]).map(x=>x[1]);
   return [BASIC,...picked,...(card.ex?[{...card.ex,ex:1}]:[])];
 }
-function fighter(card){
-  const [hp,atk,def]=BASE[card.rarity],a=(card.id*7)%3-1,b=(card.id*5)%3-1;
-  return{card,type:card.type||'萌',max:hp+a*2,hp:hp+a*2,atk:atk+a,def:def+b,skills:pickSkills(card),cd:new Map(),guard:false,weak:0,charge:false};
+function fighter(card,aura={}){// aura: your companion's team bonus (see story.js)
+  const [hp,atk,def]=BASE[card.rarity],a=(card.id*7)%3-1,b=(card.id*5)%3-1,max=hp+a*2+(aura.hp||0);
+  return{card,type:card.type||'萌',max,hp:max,atk:atk+a+(aura.atk||0),def:def+b+(aura.def||0),hb:aura.hb||0,adv:aura.adv||1.5,skills:pickSkills(card),cd:new Map(),guard:false,weak:0,charge:false};
 }
 function skillText(s){
   return [s.hit&&`傷害 ${s.hit}`,s.heal&&`回復 ${s.heal}`,s.drain&&'吸取心情',s.guard&&'擋下下一擊',s.weak&&'對手氣勢下降',s.charge&&'下次更強',s.pierce&&'無視相剋與護盾'].filter(Boolean).join('・');
@@ -38,7 +38,7 @@ function tick(f){for(const [s,v] of f.cd)if(v>0)f.cd.set(s,v-1);}
 function useSkill(a,d,s){
   const o={dmg:0,heal:0,mult:1,notes:[]};
   if(s.hit){
-    if(!s.pierce){if(BEATS[a.type]===d.type)o.mult=1.5;else if(BEATS[d.type]===a.type)o.mult=.7;}
+    if(!s.pierce){if(BEATS[a.type]===d.type)o.mult=a.adv;else if(BEATS[d.type]===a.type)o.mult=.7;}
     let x=s.hit*a.atk/10*o.mult;
     if(a.charge){x*=1.6;a.charge=false;o.notes.push('蓄力爆發！');}
     if(a.weak>0)x*=.7;
@@ -48,7 +48,7 @@ function useSkill(a,d,s){
     d.hp=Math.max(0,d.hp-x);o.dmg=x;
     if(s.drain){const h=Math.round(x*s.drain);a.hp=Math.min(a.max,a.hp+h);o.heal+=h;}
   }
-  if(s.heal){const h=Math.min(s.heal,a.max-a.hp);a.hp+=h;o.heal+=h;}
+  if(s.heal){const h=Math.min(s.heal+a.hb,a.max-a.hp);a.hp+=h;o.heal+=h;}
   if(s.guard){a.guard=true;o.notes.push('擺出防禦姿勢');}
   if(s.weak){d.weak=2;o.notes.push('對手氣勢下降');}
   if(s.charge){a.charge=true;o.notes.push('正在蓄力');}
@@ -97,6 +97,7 @@ function renderBattleView(){
   $('#bt-team').innerHTML=[0,1,2].map(i=>{const c=cards.find(x=>x.id===state.team[i]);return c?tile(c,true):'<div class="bt-slot">空位</div>';}).join('');
   $('#bt-pool').innerHTML=mine.map(c=>tile(c,state.team.includes(c.id))).join('');
   const need=Math.max(0,3-mine.length);
+  $('#bt-pet').textContent=typeof activeKitten==='function'&&activeKitten()?`🐾 夥伴 ${petName()} 的加成：${activeKitten().auraText}`:'🐾 到「冒險」領養一隻小貓，牠會在對戰時為你的隊伍加成。';
   $('#bt-start').disabled=state.team.length<3;
   ['#bt-copy-code','#bt-copy-link','#bt-friend-go'].forEach(s=>$(s).disabled=state.team.length<3);
   $('#bt-note').textContent=need?`還需要再收集 ${need} 張卡，才能組成隊伍。`:state.team.length<3?`再選 ${3-state.team.length} 張卡出戰。`:'隊伍準備好了！';
@@ -178,11 +179,11 @@ function finish(win){
 function startBattle(friend){// friend = card ids of a friend's team (played by the computer), none = random opponent
   if(state.team.length<3)return;
   ensureDaily();
-  const me=state.team.map(id=>fighter(cards.find(c=>c.id===id)));
+  const aura=typeof activeAura==='function'?activeAura():{},me=state.team.map(id=>fighter(cards.find(c=>c.id===id),aura));
   B={me,cpu:friend?friend.map(id=>fighter(cards.find(c=>c.id===id))):cpuTeam(me),friend:friend||null,mi:0,ci:0,turns:0,over:false,busy:false,date:taipeiDate(),run:(B?.run||0)+1};
   $('#bt-again').hidden=true;
   tick(B.me[0]);renderBattle();
-  say([friend?'友誼賽開始！（不計獎勵）選一個技能。':state.daily.games>=3?'今天的獎勵已領完，這場是練習賽。':'對戰開始！選一個技能。']);
+  say([typeof petName==='function'&&petName()?`🐾 ${petName()} 為隊伍加油：${activeKitten().auraText}`:'',friend?'友誼賽開始！（不計獎勵）選一個技能。':state.daily.games>=3?'今天的獎勵已領完，這場是練習賽。':'對戰開始！選一個技能。'].filter(Boolean));
   if(!$('#battle-dialog').open)$('#battle-dialog').showModal();
 }
 
