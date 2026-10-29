@@ -137,3 +137,24 @@ footer .save-note:empty{display:none}
 .dev-note p:last-child{margin:0;font-size:13px!important;line-height:1.9;color:var(--ink)!important;white-space:pre-line}
 .update-link{display:inline-block;margin-bottom:16px;font-size:11px;color:var(--lime)}
 .update-dialog>.primary{width:100%;justify-content:center}
+
+/* Gift pop-up */
+.gift-dialog{width:min(430px,94vw);max-height:94vh;overflow:auto;padding:26px 22px 20px;text-align:center;border:2px solid var(--gold);background:radial-gradient(circle at 50% 0,#3a3320,#151912 62%);animation:giftGlow 2.2s ease-in-out infinite}
+.gift-dialog::backdrop{background:rgba(5,6,4,.88)}
+.gift-banner{display:inline-block;margin:0 0 8px;padding:7px 18px;border-radius:999px;background:var(--gold);color:#2a2210;font-size:13px;font-weight:700;letter-spacing:2px;animation:giftPulse 1.4s ease-in-out infinite}
+.gift-dialog h2{font-size:22px;margin:6px 0 14px;line-height:1.4}
+.gift-card{width:min(230px,62vw);margin:0 auto;animation:giftFloat 3s ease-in-out infinite}
+.gift-card .card{cursor:default}
+.gift-name{margin:14px 0 4px;font-size:24px;font-weight:700;color:var(--gold)}
+.gift-skill{margin:0 0 14px;font-size:12px;color:var(--lime)}
+.gift-dialog .dev-note{text-align:left}
+.gift-dialog>.primary{width:100%;justify-content:center;margin-top:4px}
+.gift-dialog>.text-button{display:block;margin:6px auto 0;padding:8px}
+.gift-left{margin:4px 0 0;font-size:10px;color:var(--muted)}
+.gift-spark{position:absolute;color:var(--gold);font-size:22px;pointer-events:none;animation:giftSpark 2.4s ease-in-out infinite}
+.gift-spark.s1{left:8%;top:6%}.gift-spark.s2{right:10%;top:9%;animation-delay:.4s}.gift-spark.s3{left:5%;top:38%;animation-delay:.9s}.gift-spark.s4{right:6%;top:42%;animation-delay:1.3s}.gift-spark.s5{left:12%;top:70%;animation-delay:.2s}.gift-spark.s6{right:12%;top:74%;animation-delay:1.7s}
+@keyframes giftGlow{0%,100%{box-shadow:0 0 22px #f5d18e55}50%{box-shadow:0 0 52px #f5d18eaa}}
+@keyframes giftPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes giftFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes giftSpark{0%,100%{opacity:.2;transform:scale(.7) rotate(0)}50%{opacity:1;transform:scale(1.25) rotate(45deg)}}
+@media(prefers-reduced-motion:reduce){.gift-dialog,.gift-banner,.gift-card,.gift-spark{animation:none}}

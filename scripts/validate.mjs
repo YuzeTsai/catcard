@@ -13,6 +13,7 @@ for (const card of cards) {
   assert(rarities.has(card.rarity), 'Unknown rarity');
   assert(typeof card.image === 'string' && card.image.startsWith('assets/'), 'Use local card images');
   assert(!card.image.includes('..'), 'Image must remain inside assets');
+  if (card.base) assert(rarities.has(card.base), `Card ${card.id} has an unknown base rarity`);
   assert(['萌', '懶', '皮'].includes(card.type), `Card ${card.id} needs a type (萌/懶/皮)`);
   if (card.rarity === 'SSR' || card.rarity === 'SEC') assert(card.ex && typeof card.ex.n === 'string', `Card ${card.id} needs an exclusive skill (ex)`);
   await access(path.join(site, card.image));

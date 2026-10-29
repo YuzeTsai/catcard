@@ -10,7 +10,7 @@ A free card-collecting game made from photos of our own cats. It runs in any bro
 
 Turn everyday cat photos into a collectible card set: look after your cat, finish daily tasks to earn pack tickets, open packs to collect every cute moment, then form a team of three and fight in Meow Battle. Finish a short story adventure to adopt a kitten of your own, which lives on the home page, shares your daily tasks and boosts your team in battle.
 
-- **118 cards** in four series (VOL.01 to VOL.04), with four rarities (N / R / SR / SSR) and secret cards (SEC).
+- **119 cards** in four series (VOL.01 to VOL.04), with four rarities (N / R / SR / SSR) and secret cards (SEC).
 - **Pure web game**: no backend, no accounts, no AI API calls, no paid draws.
 - **Progress is stored in your own browser**. Move it between devices with a save code, or optionally sign in with Google to sync it to the cloud.
 
@@ -43,6 +43,13 @@ Turn everyday cat photos into a collectible card set: look after your cat, finis
 Everything runs in the browser. Clearing browser data clears progress, and each browser, device and domain keeps its own save. To switch devices, either press **Copy save code** in the page footer and paste it with **Restore save** on the new device, or press **Sign in with Google** on both and your progress is merged automatically. Signing in is optional; the whole game works without it.
 
 ## Changelog
+
+### v4.2 · Limited gift card "Milk Kitten" (2026-10-29)
+- Added the limited gift card **#119 Milk Kitten** (secret rarity): every player receives it automatically on opening the game, with no drawing or tasks needed.
+- Stats match an R card, plus one exclusive skill, "Milky Cuddle".
+- A prominent gift pop-up with a note from the developer announces it, at most once per visit and at most 5 times in total.
+- Gift cards never appear in packs and do not trigger the "found a secret card" badge.
+- The update pop-up is now v4.2 and waits for the gift pop-up to close.
 
 ### v4.1 · Google sign-in and cloud sync (2026-10-27)
 - Added optional **Google sign-in sync**: progress is saved to the cloud and follows you to other devices.
@@ -120,6 +127,9 @@ Put the image in `site/assets/` and add an entry to `site/cards.json`. Keep the 
 | `ex` | SSR and SEC | Exclusive skill, e.g. `{"n":"鼻尖碰碰","hit":18,"pierce":true}`; fields are described at the top of `site/battle.js` |
 | `story` | optional | One-line story shown in the card detail |
 | `series` | optional | The VOL number on the card face; defaults to VOL.01 |
+| `base` | optional | Rarity whose battle stats and skill count the card uses (e.g. `"R"` for a secret card with R stats) |
+| `gift` | optional | `true` makes a limited gift card: given to every player automatically, never in packs, with a gift pop-up |
+| `giftNote` | gift cards, optional | The developer's note shown in the gift pop-up |
 
 `node scripts/validate.mjs` checks the required fields and that every image exists. A failing check stops the deployment.
 
@@ -159,6 +169,7 @@ Also add the site's domain under Authentication → Settings → Authorized doma
 - `site/battle.js`: Meow Battle (skills, stats and battle flow)
 - `site/cloud.js`: Google sign-in and cloud sync (Firebase)
 - `site/version.js`: update pop-up (version number, highlights and the developer's note)
+- `site/gift.js`: automatic delivery of limited gift cards and the gift pop-up
 - `site/cards.json`: card data
 - `site/assets/`: cat photos
 - `scripts/validate.mjs`: card and asset checks

@@ -2,16 +2,17 @@
 // Update pop-up: shown once per version to returning players, and reopenable from the footer.
 // To announce a new update, change `version`, `title`, `items` and `note` below.
 const UPDATE={
-  version:'4.1',
-  date:'2026-10-27',
-  title:'故事冒險、夥伴小貓與雲端同步',
+  version:'4.2',
+  date:'2026-10-29',
+  title:'限定贈禮、故事冒險與雲端同步',
   items:[
+    '限定贈禮卡「奶貓」送給每一位玩家，已經放進你的圖鑑，快去看看！',
     '新增「冒險」：走一段雨夜的故事，領養一隻屬於你的小貓，還能幫牠取名字。',
     '5 隻夥伴小貓住在首頁，每日任務會用牠的名字，對戰時還會幫你的隊伍加成。',
-    '新增 24 張 VOL.04 卡片，卡池一共 118 張。',
+    '新增 VOL.04 卡片，卡池一共 119 張。',
     '新增選用的 Google 登入同步，換裝置也能繼承進度。',
     '新增「隊伍代碼」，可以把自己的隊伍傳給朋友對戰。'],
-  note:'謝謝你打開喵宇宙！\n這個小遊戲是用我們家貓咪的日常照片做的，一開始只有 40 張卡，現在已經長到 118 張了。\n這次最想讓你看看的是故事冒險：每一個選擇，都會帶你遇見不同的小貓。\n願你每天都有一點小小的、毛茸茸的開心。'};
+  note:'謝謝你打開喵宇宙！\n這個小遊戲是用我們家貓咪的日常照片做的，一開始只有 40 張卡，現在已經長到 119 張了。\n這次最想讓你看看的是故事冒險：每一個選擇，都會帶你遇見不同的小貓。\n願你每天都有一點小小的、毛茸茸的開心。'};
 const SEEN_KEY='meowverse-seen-version';
 const UPDATE_LOG='https://github.com/YuzeTsai/catcard/blob/main/README.md#版本更新紀錄';
 
@@ -35,5 +36,6 @@ $('#update-dialog').addEventListener('close',markSeen);
   if(seen===UPDATE.version)return;
   if(!seen&&!hasSave){markSeen();return;}// brand-new player: nothing "updated" for them yet
   if(new URLSearchParams(location.search).has('team'))return;// opened from a friend's battle invite
-  setTimeout(showUpdate,700);
+  const go=()=>setTimeout(()=>{if(window.giftShowing)document.addEventListener('giftclosed',showUpdate,{once:true});else showUpdate();},500);
+  if(cards.length)go();else document.addEventListener('cards-ready',go,{once:true});
 })();

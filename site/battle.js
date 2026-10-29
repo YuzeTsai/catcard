@@ -18,11 +18,11 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 function pickSkills(card){// deterministic per card, so a card always has the same moves
   const pool=POOL[card.type]||POOL.萌;
-  const picked=pool.map((s,i)=>[Math.imul(card.id*9301+i*49297+233280,2654435761)>>>0,s]).sort((a,b)=>a[0]-b[0]).slice(0,SKILL_COUNT[card.rarity]).map(x=>x[1]);
+  const picked=pool.map((s,i)=>[Math.imul(card.id*9301+i*49297+233280,2654435761)>>>0,s]).sort((a,b)=>a[0]-b[0]).slice(0,SKILL_COUNT[card.base||card.rarity]).map(x=>x[1]);
   return [BASIC,...picked,...(card.ex?[{...card.ex,ex:1}]:[])];
 }
 function fighter(card,aura={}){// aura: your companion's team bonus (see story.js)
-  const [hp,atk,def]=BASE[card.rarity],a=(card.id*7)%3-1,b=(card.id*5)%3-1,max=hp+a*2+(aura.hp||0);
+  const [hp,atk,def]=BASE[card.base||card.rarity],a=(card.id*7)%3-1,b=(card.id*5)%3-1,max=hp+a*2+(aura.hp||0);
   return{card,type:card.type||'萌',max,hp:max,atk:atk+a+(aura.atk||0),def:def+b+(aura.def||0),hb:aura.hb||0,adv:aura.adv||1.5,skills:pickSkills(card),cd:new Map(),guard:false,weak:0,charge:false};
 }
 function skillText(s){
